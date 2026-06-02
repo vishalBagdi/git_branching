@@ -6,15 +6,53 @@
   <body>
     <h1>Todo Form</h1>
 
-    <form>
-      <input type="text" placeholder="Item Name" />
+    <form id="todo-form">
+      <input type="text" placeholder="Item Name" id="item-name" />
 
       <br /><br/>
 
-      <textarea placeholder="Item Description"></textarea>
+      <textarea placeholder="Item Description" id="item-description"></textarea>
 
       <br /><br/>
     <button type="submit">Submit</button>
     </form>
+
+    <script>
+document.getElementById("todo-form").addEventListener("submit", async function(event) {
+    
+    // Prevent page refresh
+    event.preventDefault();
+
+    // Get values from form
+    const itemName = document.getElementById("item-name").value;
+    const itemDescription = document.getElementById("item-description").value;
+
+    try {
+        // Send POST request to Flask API
+        const response = await fetch("http://localhost:8000/submittodoitem", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                itemName: itemName,
+                itemDescription: itemDescription
+            })
+        });
+
+        const data = await response.json();
+
+        // Show success message
+        alert(data.message);
+
+        // Clear form
+        document.getElementById("todo-form").reset();
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to save todo item");
+    }
+});
+</script>
   </body>
 </html>
